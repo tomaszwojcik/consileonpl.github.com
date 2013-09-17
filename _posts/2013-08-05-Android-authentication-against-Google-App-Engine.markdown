@@ -3,10 +3,7 @@ layout: post
 title: Android authentication against Google App Engine
 categories: [google-app-engine, android]
 ---
-Recently I was a part of project consisting of Google App Engine server side and Android mobile client.
-Our main goal was to provide as much SSO as possible so we decided to use same Google accounts both on the server and the client.
-
-This post covers the whole client side authentication - retrieving Google account, invalidating and refreshing the token, receiving cookies from the server and using it for accessing server resources via HttpClient.
+In this post I will cover Android and Google App Engine client side authentication - retrieving Google account, invalidating and refreshing the token, receiving cookies from the server and using them for accessing server resources via HttpClient.
 
 ## Retrieving Google account and authentication token
 
@@ -14,12 +11,6 @@ For accessing accounts in the Android you must add security permissions in the A
 
 ### Retrieving Google account
 Following snippet allows you to retrieve <accountName\>@gmail.com.
-
-{% highlight java %}
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.Context;
-{% endhighlight %}
 
 {% highlight java %}
 private Account getAccountForName(Context context, String accountName) {
@@ -42,14 +33,6 @@ If we have an account we can get auth token from it.
 For more detail about possible exceptions read the <a href="http://developer.android.com/reference/android/accounts/AccountsException.html">official documentation</a>.
 
 {% highlight java %}
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AccountsException;
-import android.content.Intent;
-import android.os.Bundle;
-{% endhighlight %}
-
-{% highlight java %}
 private String getTokenFromAccountManagerFuture(AccountManagerFuture<Bundle> future) throws AccountsException, IOException {
     Bundle bundle = future.getResult();
     Intent intent = (Intent) bundle.get(AccountManager.KEY_INTENT);
@@ -62,7 +45,7 @@ private String getTokenFromAccountManagerFuture(AccountManagerFuture<Bundle> fut
 {% endhighlight %}
 
 ### Retrieving refreshed Auth token
-Now we can write a public method to get the refreshed token. For that we will use mentioned methods.
+Now we can write a public method to get the refreshed token. For that we will use previously implemented methods.
 Keep in mind that you have to handle the intent if you passed it somehow.
 
 {% highlight java %}
@@ -129,14 +112,6 @@ From now we can make authenticated requests using our httpContext;
 ## Troubleshooting
 There can be a case that you will not get the cookie used for authentication in the requested httpContext.
 For that you should use extend HttpContext and check if there is a cookie:
-{% highlight java %}
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-{% endhighlight %}
 
 {% highlight java %}
 public class AuthenticatedHttpContext implements HttpContext {
